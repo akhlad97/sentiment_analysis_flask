@@ -1,53 +1,49 @@
-from pathlib import Path
-import pickle
+import os
+import joblib
+from huggingface_hub import hf_hub_download
 
 
-# Get the project directory
-BASE_DIR = Path(__file__).resolve().parent
+MODEL_NAME = "sentiment_model_randomforest.pkl"
+TFIDF_NAME = "sentiment_randomforest_TFIDF.pkl"
 
-
-# Model file paths
-MODEL_PATH = BASE_DIR / "sentiment_model_randomforest.pkl"
-VECTORIZER_PATH = BASE_DIR / "sentiment_randomforest_TFIDF.pkl"
+REPO_ID = "akhlad/sentiment-analysis-randomforest"
 
 
 def load_model():
-    """Load the trained model and TF-IDF vectorizer."""
 
-    if not MODEL_PATH.exists():
-        raise FileNotFoundError(
-            f"Model file not found: {MODEL_PATH}. "
-            "Run train_model.py first."
+    model_path = MODEL_NAME
+    tfidf_path = TFIDF_NAME
+
+    # If model files are not available locally,
+    # download them from Hugging Face.
+    if not os.path.exists(model_path):
+        model_path = hf_hub_download(
+            repo_id=REPO_ID,
+            filename=MODEL_NAME
         )
 
-    if not VECTORIZER_PATH.exists():
-        raise FileNotFoundError(
-            f"Vectorizer file not found: {VECTORIZER_PATH}. "
-            "Run train_model.py first."
+    if not os.path.exists(tfidf_path):
+        tfidf_path = hf_hub_download(
+            repo_id=REPO_ID,
+            filename=TFIDF_NAME
         )
 
-    with open(MODEL_PATH, "rb") as file:
-        model = pickle.load(file)
+    model = joblib.load(model_path)
+    tfidf_vectorizer = joblib.load(tfidf_path)
 
-    with open(VECTORIZER_PATH, "rb") as file:
-        vectorizer = pickle.load(file)
-
-    return model, vectorizer
+    return model, tfidf_vectorizer
 
 
-# Load model and vectorizer
 model, tfidf_vectorizer = load_model()
 
 
-def predict_sentiment(review):
-    """Predict whether a movie review is positive or negative."""
+def predict_sentiment(text):
 
-    review_vector = tfidf_vectorizer.transform([review])
+    transformed_text = tfidf_vectorizer.transform([text])
 
-    prediction = model.predict(review_vector)
+    prediction = model.predict(transformed_text)[0]
 
-    if prediction[0] == 1:
-        return "positive review"
-
-    return "negative review"
-print('done')
+    if prediction == 1:
+        return "Positive"
+    else:
+        return "Negative"
