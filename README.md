@@ -6,6 +6,9 @@ This project is a web-based Sentiment Analysis application that predicts whether
 
 The machine learning model is trained using a **Random Forest Classifier** and **TF-IDF Vectorization**. The trained model is integrated with a **Flask web application**.
 
+## download IMDB dataset from kaggel 
+https://www.kaggle.com/datasets/lakshmi25npathi/imdb-dataset-of-50k-movie-reviews
+
 ## Features
 
 * Predicts Positive or Negative sentiment
