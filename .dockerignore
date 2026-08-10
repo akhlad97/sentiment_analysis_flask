@@ -1,0 +1,14 @@
+**pycache**/
+*.pyc
+*.pyo
+
+.git/
+.gitignore
+
+IMDB_dataset.txt
+train_model.py
+train_model.ipynb
+
+.env
+venv/
+dl_env/
