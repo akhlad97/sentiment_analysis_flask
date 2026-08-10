@@ -2,4 +2,3 @@ Flask
 scikit-learn
 pandas
 numpy
-kagglehub
